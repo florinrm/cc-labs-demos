@@ -133,10 +133,78 @@ kubectl describe pod nginx
 
 # get pods using label selector
 kubectl get pods -l app=myapp
+
+# launch ClusterIP service
+kubectl apply -f my-service.yaml
 ```
 
 ## ReplicaSets
+- creating a ReplicaSet:
+```bash
+kubectl apply -f my-nginx-rs.yaml
+```
+
+- list ReplicaSets:
+```bash
+kubectl get replicasets
+```
+
+- show details about a ReplicaSet:
+```bash
+kubectl describe rs <replica-set>
+# OR
+kubectl describe replicaset <replica-set>
+```
+
+- delete ReplicaSet
+```bash
+kubectl delete rs <replica-set>
+# OR
+kubectl delete replicaset <replica-set>
+```
+
+- scale ReplicaSet:
+```bash
+kubectl scale replicasets <replicaset> –replicas=4
+```
+
+### Example 3
+```bash
+kubectl apply -f testapp-rs.yaml 
+
+kubectl get pods
+
+kubectl describe rs testapp
+
+kubectl scale rs testapp --replicas=4
+
+kubectl delete rs testapp
+```
 
 ## Deployments
+- create deployment:
+```bash
+kubectl apply -f my-nginx-deployment.yaml
+```
+
+- list deployments:
+```bash
+kubectl get deployments
+```
 
 ## ConfigMaps and Secrets
+
+- create ConfigMap:
+```bash
+kubectl apply -f basic-configmap.yaml
+```
+
+- list ConfigMaps:
+```bash
+kubectl get configmaps
+```
+
+- describe ConfigMap
+```bash
+kubectl describe configmap <config-map>
+```
