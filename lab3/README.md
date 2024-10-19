@@ -97,3 +97,19 @@ kubectl apply -f api-pod-config.yaml
 kubectl expose pod apipod --port 80 --type=NodePort # we will see the port used by the service, for example 80:30714/TCP
 ```
 
+- let's configure the DB in the K8S pod:
+```bash
+kubectl exec -it db-pod bash # entering in the DB pod
+
+psql -h localhost -U admin --password books # connecting to the DB instance
+
+```
+
+- and we will run this SQL query:
+```sql
+CREATE TABLE IF NOT EXISTS books (
+    id uuid PRIMARY KEY NOT NULL ,
+    title VARCHAR NOT NULL,
+    author VARCHAR NOT NULL
+);
+```
