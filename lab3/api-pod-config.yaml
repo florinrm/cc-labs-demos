@@ -6,7 +6,7 @@ metadata:
     app: api
 spec:
   containers:
-    - image: mobylab/idp-laborator2-api
+    - image: mobylab/idp-laborator2-books
       name: apicontainer
       env:
         - name: PGUSER
@@ -19,3 +19,5 @@ spec:
           value: "postgres"
         - name: PGPORT
           value: "5432"
+      ports:
+      - containerPort: 80
