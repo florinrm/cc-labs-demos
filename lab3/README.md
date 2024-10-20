@@ -97,11 +97,14 @@ kubectl apply -f api-pod-config.yaml
 kubectl expose pod apipod --port 80 --type=NodePort # we will see the port used by the service, for example 80:30714/TCP
 # OR
 kubectl apply -f api-nodeport-config.yaml
+
+# add port-forwarding
+kubectl port-forward services/api 3000:80 # we can send requests to localhost:3000
 ```
 
 - let's configure the DB in the K8S pod:
 ```bash
-kubectl exec -it db-pod bash # entering in the DB pod
+kubectl exec -it db-pod -- bash # entering in the DB pod
 
 psql -h localhost -U admin --password books # connecting to the DB instance
 
