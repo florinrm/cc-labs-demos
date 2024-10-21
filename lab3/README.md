@@ -113,8 +113,8 @@ psql -h localhost -U admin --password books # connecting to the DB instance
 - and we will run this SQL query:
 ```sql
 CREATE TABLE IF NOT EXISTS books (
-    id uuid PRIMARY KEY NOT NULL ,
-    title VARCHAR NOT NULL,
-    author VARCHAR NOT NULL
+    id serial PRIMARY KEY,
+    title varchar NOT NULL,
+    author varchar NOT NULL
 );
 ```
