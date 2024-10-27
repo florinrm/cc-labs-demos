@@ -1,0 +1,1 @@
+LabCCTerraform = "Value from tfvars file"
