@@ -1,38 +1,71 @@
-# Lab 4 - Terraform
-- initializing infrastructure
-```bash
-terraform init # init the infra
+# Lab 4 - Helm
 
-terraform fmt # formatting main.tf file
+## Creating K8S cluster with Kind
 
-terraform validate # validate configuration from main.tf file
+```shell
+# creating a new cluster, serving in a Docker container, which acts as a node
+kind create cluster --name cloud-lab4
 
-terraform plan
+# see info about a cluster
+kubectl cluster-info --context kind-cloud-lab4
 
-terraform apply # apply the changes from main.tf
+# see the current context
+kubectl config current-context
 
-terraform show
-
-docker container ls # check for the freshly created Docker container
-
-terraform destroy
+kind delete cluster --name cloud-lab4
 ```
 
-- adding variables (`outputs.tf` file):
-```bash
-terraform apply
+## Helm charts
 
-terraform show
+```shell
+# creating a Helm chart
+helm create mychart
 
-export TF_VAR_MYTESTVAR="myvalue"
+# release Helm chart
+helm install example-release ./mychart
 
-terraform plan
+# checking the pods created using Helm charts
+kubectl get pods,rs,svc 
 
-terraform apply
+helm template example-release ./mychart --set replicaCount=2
 
-terraform show
+helm upgrade example-release ./mychart --set replicaCount=2
 
-export TF_VAR_LabCCTerraform="Value from environment"
+kubectl get deployment example-release-mychart -o yaml | grep replicas
 
-terraform apply -var LabCCTerraform=valueFromCommandLine
+helm rollback example-release
+
+helm uninstall example-release
+```
+
+## Helm charts + repos
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+helm install my-nginx bitnami/nginx
+
+kubectl get pods,rs,svc -l app.kubernetes.io/instance=my-nginx
+
+helm uninstall my-nginx
+```
+
+## Helm charts for multi-pods apps
+```shell
+helm create webapp
+
+helm install webdemo ./webapp
+
+kubectl get pods -l app=webdemo-backend
+
+kubectl get pods -l app=webdemo-frontend
+
+kubectl get svc | grep webdemo
+
+helm template webdemo ./webapp | less
+
+helm get manifest webdemo
+
+helm upgrade webdemo ./webapp --set frontend.replicaCount=2
+
+helm uninstall webdemo
 ```

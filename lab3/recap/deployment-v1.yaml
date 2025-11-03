@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recap-app
+  labels:
+    app: recap-app
+    version: "1"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: recap-app
+  template:
+    metadata:
+      labels:
+        app: recap-app
+        version: "1"
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recap-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: recap-app
+  ports:
+  - port: 80
+    targetPort: 80

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recreate-app
+  labels:
+    app: recreate-app
+    version: "2"
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate    # All pods terminated before new ones created
+  selector:
+    matchLabels:
+      app: recreate-app
+  template:
+    metadata:
+      labels:
+        app: recreate-app
+        version: "2"
+    spec:
+      containers:
+      - name: web-server
+        image: nginx:1.23
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html  
+      volumes:
+      - name: html
+        configMap:
+          name: recreate-app-v2  # This ConfigMap contains our custom index.html
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recreate-app-v2
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Recreate - V2</title></head>
+    <body>
+      <h1>Recreate Deployment</h1>
+      <h2>Version 2.0</h2>
+      <p>NEW version after recreate!</p>
+      <p>Notice the downtime was unavoidable</p>
+    </body>
+    </html>

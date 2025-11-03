@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-deployment
+  labels:
+    app: web-app
+    env: blue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-app
+      env: blue
+  template:
+    metadata:
+      labels:
+        app: web-app
+        env: blue
+        version: "1"
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: blue-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blue-config
+data:
+  index.html: |
+    <html>
+    <head><title>BLUE Environment</title></head>
+    <body style="background:#2196F3; color:white; font-size:2em; padding:50px">
+      <h1>🔵 BLUE Environment</h1>
+      <h2>Version 1.0</h2>
+      <p>This is the production environment</p>
+    </body>
+    </html>

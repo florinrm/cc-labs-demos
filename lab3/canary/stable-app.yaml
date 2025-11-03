@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stable-app
+  labels:
+    app: web-app
+    track: stable
+spec:
+  replicas: 9  # 90% din trafic
+  selector:
+    matchLabels:
+      app: web-app
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: web-app
+        track: stable
+        version: "1"
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: web-app-v1
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-app-v1
+data:
+  index.html: |
+    <html><head><title>Stable V1</title></head>
+    <body style="background:#f0f0f0">
+    <h1>🔵 Stable Version 1.0</h1>
+    <p>90% of traffic here</p>
+    </body></html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+spec:
+  selector:
+    app: web-app  # Selects BOTH stable AND canary!
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer

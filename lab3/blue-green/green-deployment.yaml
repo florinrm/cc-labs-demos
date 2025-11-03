@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-deployment
+  labels:
+    app: web-app
+    env: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-app
+      env: green
+  template:
+    metadata:
+      labels:
+        app: web-app
+        env: green
+        version: "2"
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html
+        configMap:
+          name: green-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: green-config
+data:
+  index.html: |
+    <html>
+    <head><title>GREEN Environment</title></head>
+    <body style="background:#4CAF50; color:white; font-size:2em; padding:50px">
+      <h1>🟢 GREEN Environment</h1>
+      <h2>Version 2.0</h2>
+      <p>This is the new version!</p>
+      <p>Ready for production</p>
+    </body>
+    </html>

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rolling-app
+  labels:
+    app: rolling-app
+    version: "1"
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1           # Can have 1 extra pod during rollout
+      maxUnavailable: 0     # No unavailable pods (zero downtime)
+  selector:
+    matchLabels:
+      app: rolling-app
+  template:
+    metadata:
+      labels:
+        app: rolling-app
+        version: "1"
+    spec:
+      containers:
+      - name: web-server
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html  
+      volumes:
+      - name: html
+        configMap:
+          name: rolling-app-v1  # This ConfigMap contains our custom index.html
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rolling-app-v1
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Rolling Update - V1</title></head>
+    <body>
+      <h1>Rolling Update Deployment</h1>
+      <h2>Version 1.0</h2>
+      <p>This is the Rolling Update strategy demonstration.</p>
+      <p>Zero downtime deployment in action!</p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rolling-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: rolling-app
+  ports:
+  - port: 80
+    targetPort: 80
